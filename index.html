@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>뉴런과 신경계 | 어게인 실험과학 수학학원</title>
+<meta name="description" content="외울 문장, 거울 그리기, 명령이 가는 길, OX 퀴즈로 알아보는 뉴런과 신경계">
+<script>
+/* ===== OX 퀴즈 : [문제, 정답, 풀이] — 여기만 고치면 퀴즈가 바뀌어요 ===== */
+const QS=[
+ ['거울을 보며 그림을 그리면, 거울 없이 그릴 때보다 시간이 더 걸린다.','O','거울 속은 위 · 아래가 바뀌어 보여요. 대뇌가 손이 갈 길을 다시 판단하느라 시간이 더 걸려요.'],
+ ['손을 움직이라는 명령은 손 근육이 스스로 내린다.','X','손을 움직이라는 명령은 대뇌가 판단해 내려요. 운동 신경이 그 명령을 손 근육으로 전달해요.'],
+ ['거울 그리기를 거듭 연습하면 틀린 횟수가 줄어든다.','O','같은 도형을 거듭 그리면 뇌가 거울 속 방향에 맞는 움직임을 익혀요. 그래서 시간과 틀린 횟수가 줄어요.'],
+ ['뉴런은 받은 자극을 다음 뉴런에 전달하는 세포다.','O','뉴런은 신경을 이루는 세포예요. 나뭇가지처럼 뻗은 쪽으로 자극을 받아, 길게 뻗은 끝으로 다음 뉴런에 넘겨요.'],
+ ['신호등을 보고 길을 건너는 것은 대뇌의 판단 없이 일어난다.','X','초록불을 보고 건널지 대뇌가 판단해 명령을 내려요. 대뇌가 판단한 의식적 반응이에요.']
+];
+/* ===== 외울 문장 : 빈칸 정답(차례대로)과 낱말 단추 ===== */
+const SLOTS=['대뇌','판단'];
+const WORDS=['대뇌','판단','손 근육','뉴런','전달'];
+</script>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#13294b; --navy-d:#0a1a33; --navy-s:#eef2f8; --mid:#c5cfdd; --line:#dfe5ee;
+  --teal:#0e9f97; --teal-d:#0a726c; --teal-s:#e0f6f4;
+  --orange:#ff7b1c; --orange-d:#c25300; --orange-s:#fff1e4;
+  --ruby:#c8283a; --ink:#22293a; --sub:#5f6b7d; --gray:#a9b6c8;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;color:var(--ink);font-family:"Noto Sans KR",system-ui,sans-serif;font-weight:500;background:#fff}
+body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-action:manipulation}
+.jua,header,nav,.bbtn,.msg,.sent,.read,.now,.cg,.quiz,footer{font-family:"Jua",sans-serif}
+svg text{font-family:"Jua",sans-serif;text-anchor:middle}
+
+.bbtn{font-size:21px;min-height:60px;padding:8px 18px;color:#fff;background:var(--navy);border-radius:999px;
+  box-shadow:inset 0 -6px 0 rgba(0,0,0,.18),0 5px 0 var(--navy-d);word-break:keep-all;line-height:1.15}
+.bbtn:active{transform:translateY(3px)}
+.bbtn.orange{background:var(--orange);color:#3b1700;box-shadow:inset 0 -6px 0 rgba(0,0,0,.08),0 5px 0 var(--orange-d)}
+.bbtn.white{background:#fff;color:var(--navy);box-shadow:0 4px 0 var(--mid);border:3px solid var(--mid)}
+.bbtn.on{background:var(--teal-s);color:var(--teal-d);border-color:var(--teal);box-shadow:0 4px 0 var(--teal)}
+.bbtn:disabled{opacity:.4;cursor:default}
+
+header{position:sticky;top:0;z-index:30;background:#fff;box-shadow:0 3px 0 var(--line);padding:8px 16px}
+.head-in{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.titles{flex:1;min-width:0}
+.brand{font-size:15px;color:var(--sub)}
+h1{margin:0;font-weight:400;font-size:clamp(21px,4vw,32px);color:var(--navy);line-height:1.15;word-break:keep-all}
+.share{font-size:18px;min-height:52px;padding:6px 20px;flex:none}
+
+nav{max-width:1100px;width:100%;margin:10px auto 0;padding:0 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tab{position:relative;min-height:58px;border-radius:18px;background:var(--navy-s);font-size:clamp(15px,2.1vw,20px);line-height:1.15;padding:4px;
+  border:3px solid transparent;word-break:keep-all;text-align:center;color:var(--navy)}
+.tab.on{background:var(--navy);color:#fff}
+.tab .nw{white-space:nowrap}
+.tab .star{position:absolute;top:-10px;right:-2px;font-size:22px;color:var(--orange);display:none}
+.tab.done .star{display:block;animation:pop .5s}
+
+main{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:10px 12px 12px;overflow-x:hidden;overflow-x:clip}
+.panel{display:none}
+.panel.on{display:block;animation:fadein .3s}
+.msg{background:var(--navy-s);border-radius:18px;padding:9px 16px;font-size:clamp(17px,2.3vw,21px);line-height:1.35;word-break:keep-all;min-height:calc(2.7em + 18px)}
+.msg b{font-weight:400;color:var(--orange-d)}
+.msg.warn{background:var(--orange-s);animation:shake .4s}
+.msg.good{background:var(--teal-s)}
+.stage{position:relative;border-radius:20px;overflow:hidden;box-shadow:0 0 0 3px var(--line);background:#fff;min-width:0}
+.stage svg{display:block;width:100%;height:100%}
+.row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;padding-bottom:5px}
+
+/* 1 외울 문장 */
+.memo{display:grid;gap:12px;max-width:900px;margin:0 auto}
+.sent{background:#fff;border:3px solid var(--line);border-radius:24px;padding:20px 16px;font-size:clamp(23px,3.6vw,34px);line-height:1.7;text-align:center;word-break:keep-all;color:var(--ink);transition:background .3s}
+.sent .term{color:var(--navy)}
+.sent .nb{display:inline-block}
+.slot{display:inline-block;min-width:3em;padding:0 .25em;margin:0 .08em;border-bottom:4px solid var(--mid);color:var(--teal-d);line-height:1.25}
+.slot.cur{border-color:var(--orange);background:var(--orange-s);border-radius:10px 10px 0 0}
+.slot.ok{border-color:var(--teal);animation:pop .4s}
+.sent.solved{background:var(--teal-s);border-color:var(--teal);font-size:clamp(28px,5vw,46px);line-height:1.5;padding:26px 18px}
+.sent.solved .slot{border:0;background:none;min-width:0;padding:0;margin:0;color:var(--orange-d)}
+.words{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding-bottom:5px}
+.words .bbtn{font-size:clamp(20px,3vw,26px);padding:6px}
+.words .bbtn.on{opacity:1}
+.read{display:none;text-align:center}
+.read.on{display:block;animation:fadein .4s}
+.read p{font-size:clamp(23px,3.4vw,30px);color:var(--navy);margin:2px 0 12px}
+.dots{display:flex;gap:16px;justify-content:center}
+.dots button{width:74px;height:74px;border-radius:50%;border:4px solid var(--mid);background:#fff;font-family:"Jua",sans-serif;font-size:20px;color:var(--sub);box-shadow:0 4px 0 var(--mid);line-height:1.1}
+.dots button.on{background:var(--orange);border-color:var(--orange-d);color:#fff;box-shadow:0 4px 0 var(--orange-d);animation:pop .4s}
+.dots button:active{transform:translateY(3px)}
+
+/* 2 거울 그리기 */
+.mg{display:grid;gap:10px}
+.mwrap{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+.cstage{aspect-ratio:1/1;width:100%;max-width:calc(100vh - 290px);max-width:calc(100dvh - 290px);min-width:min(100%,300px);margin:0 auto;touch-action:none}
+#cv{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}
+.badge{position:absolute;left:10px;top:10px;font-family:"Jua",sans-serif;font-size:clamp(14px,2vw,18px);padding:4px 12px;border-radius:999px;background:var(--orange-s);color:var(--orange-d);box-shadow:0 0 0 2px var(--orange);pointer-events:none}
+.badge.off{background:var(--teal-s);color:var(--teal-d);box-shadow:0 0 0 2px var(--teal)}
+.pen{position:absolute;left:0;top:0;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 5px rgba(255,123,28,.3);pointer-events:none;display:none}
+.side{display:grid;gap:12px;align-content:start}
+.now{background:var(--navy-s);border-radius:18px;padding:8px 14px;text-align:center}
+.now .k{font-size:18px;color:var(--sub)}
+.now .v{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;font-size:clamp(23px,3.2vw,30px);color:var(--navy)}
+.now b{font-weight:400;color:var(--orange-d)}
+.btn2{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-bottom:5px}
+.btn2 .bbtn{font-size:19px;padding:6px 8px}
+.chart{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cg{border:3px solid var(--line);border-radius:18px;padding:8px 6px 6px}
+.ct{text-align:center;font-size:16px;color:var(--sub);margin-bottom:2px}
+.bars{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;height:150px}
+.bar{display:flex;flex-direction:column;align-items:center;min-width:0}
+.bar .val{font-size:15px;color:var(--navy);min-height:1.25em;line-height:1.25}
+.bar .trk{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center}
+.bar i{display:block;width:72%;background:var(--navy);border-radius:6px 6px 0 0;transition:height .5s}
+.bar.f i{background:var(--teal)}
+.bar.empty i{background:none;border:2px dashed var(--mid);border-bottom:0}
+.bar .bl{font-size:13px;color:var(--sub);line-height:1.1;margin-top:3px;min-height:2.2em;text-align:center;word-break:keep-all;border-top:2px solid var(--mid);width:100%;padding-top:3px}
+
+/* 3 명령이 가는 길 */
+.route{display:grid;gap:10px}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding-top:4px}
+.cards .bbtn{position:relative;font-size:clamp(17px,2.6vw,24px);padding:4px 6px}
+.cards .bbtn.ok{background:var(--teal);color:#fff;border-color:var(--teal-d);box-shadow:0 4px 0 var(--teal-d);opacity:1}
+.cards .no{position:absolute;top:-11px;left:-5px;width:28px;height:28px;border-radius:50%;background:var(--orange);color:#fff;font-size:17px;display:none;place-items:center}
+.cards .ok .no{display:grid}
+.rstage{height:clamp(230px,calc(100vh - 420px),62vw);height:clamp(230px,calc(100dvh - 420px),62vw)}
+.eyew{fill:#fff;stroke:var(--gray);stroke-width:4}
+.iris{fill:#9cc3e6}
+#s0.lit .eyew{stroke:var(--teal);stroke-width:6}
+.neu .den,.neu .ax{fill:none;stroke:var(--gray);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.neu .my{fill:none;stroke:var(--mid);stroke-width:13;stroke-dasharray:30 8}
+.neu .body{fill:#e8edf4;stroke:var(--gray);stroke-width:4}
+.neu .nuc,.neu .tb{fill:var(--gray)}
+.neu.t.lit .den,.neu.t.lit .ax{stroke:var(--teal)} .neu.t.lit .my{stroke:#8fd9d3} .neu.t.lit .body{fill:var(--teal-s);stroke:var(--teal)} .neu.t.lit .nuc,.neu.t.lit .tb{fill:var(--teal)}
+.neu.g.lit .den,.neu.g.lit .ax{stroke:var(--orange)} .neu.g.lit .my{stroke:#ffc595} .neu.g.lit .body{fill:var(--orange-s);stroke:var(--orange)} .neu.g.lit .nuc,.neu.g.lit .tb{fill:var(--orange)}
+.bw{fill:var(--navy-s);stroke:var(--gray);stroke-width:4;stroke-linejoin:round;transition:fill .3s}
+.gy{fill:none;stroke:var(--mid);stroke-width:4;stroke-linecap:round}
+#s2.lit .bw{fill:var(--navy);stroke:var(--navy-d)} #s2.lit .gy{stroke:rgba(255,255,255,.35)}
+.hs{fill:var(--gray);stroke:var(--gray);stroke-width:8} .hf{fill:var(--navy-s);transition:fill .3s}
+#s4.lit .hs{fill:var(--orange);stroke:var(--orange)} #s4.lit .hf{fill:var(--orange-s)}
+.leg{fill:none;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.leg.t{stroke:var(--teal)} .leg.g{stroke:var(--orange)}
+.lb{font-size:23px;fill:var(--sub);paint-order:stroke;stroke:#fff;stroke-width:7px;stroke-linejoin:round}
+.lb.on{fill:var(--navy)}
+#l2{stroke:none;font-size:28px} #l2.on{fill:#fff}
+#dot{display:none} #dot .gl{fill:#ffd84d;opacity:.5;animation:glow .8s ease-in-out infinite alternate}
+
+/* 4 OX 퀴즈 */
+.score{font-size:21px;color:var(--sub);text-align:center}
+.score b{font-weight:400;color:var(--orange-d);font-size:1.3em}
+.quiz{max-width:820px;margin:0 auto;text-align:center}
+.q{background:var(--navy-s);border-radius:24px;padding:16px;margin:8px 0;font-size:clamp(22px,3.4vw,32px);line-height:1.35;word-break:keep-all;min-height:124px;display:grid;place-items:center}
+.ox{display:flex;gap:18px;justify-content:center}
+.ox button{width:min(42%,200px);height:clamp(92px,16vh,140px);border-radius:28px;font-size:clamp(62px,12vw,90px);line-height:1;color:#fff}
+.ox .o{background:var(--navy);box-shadow:0 7px 0 var(--navy-d)}
+.ox .x{background:var(--orange);color:#3b1700;box-shadow:0 7px 0 var(--orange-d)}
+.ox button:active{transform:translateY(4px)}
+.ox button:disabled{opacity:.4}
+.fb{min-height:4.2em;margin:14px 0 10px;font-size:clamp(18px,2.6vw,23px);line-height:1.4;word-break:keep-all}
+.fb.good{color:var(--teal-d)}.fb.bad{color:var(--ruby)}
+
+footer{background:var(--navy-s);padding:8px 12px;text-align:center;font-size:15px;color:var(--navy);line-height:1.35;word-break:keep-all}
+footer span{display:inline-block;margin:0 6px}
+.toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%);background:var(--ink);color:#fff;font-family:"Jua",sans-serif;font-size:20px;padding:12px 26px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:99;white-space:nowrap}
+.toast.on{opacity:1}
+.fx{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:98}
+.conf{position:absolute;top:-20px;width:13px;height:13px;animation:fall linear forwards}
+.spk{position:absolute;font-size:26px;transform:translate(-50%,-50%);animation:spk .7s ease-out forwards}
+.shake{animation:shake .4s}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+@keyframes spk{to{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.3);opacity:0}}
+@keyframes pop{0%{transform:scale(.7)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-9px)}40%,80%{transform:translateX(9px)}}
+@keyframes glow{to{opacity:.15}}
+
+@media (min-width:900px){
+  .mwrap{grid-template-columns:minmax(0,1fr) 340px;align-items:start}
+}
+@media (max-width:560px){
+  .msg{min-height:calc(4.05em + 18px)}
+  .share{font-size:16px;padding:6px 14px;min-height:50px}
+  .words{grid-template-columns:repeat(3,1fr)}
+  .cards{gap:5px}
+  .cards .bbtn{font-size:16px;padding:4px 2px}
+  .bars{height:120px}
+  .lb{font-size:26px}
+}
+</style>
+</head>
+<body>
+<header><div class="head-in">
+  <div class="titles"><div class="brand">어게인 실험과학 수학학원</div><h1>뉴런과 신경계</h1></div>
+  <button class="bbtn orange share" id="share">공유하기</button>
+</div></header>
+
+<nav>
+  <button class="tab on" data-t="0">외울 문장<span class="star">★</span></button>
+  <button class="tab" data-t="1">거울 그리기<span class="star">★</span></button>
+  <button class="tab" data-t="2">명령이 <span class="nw">가는 길</span><span class="star">★</span></button>
+  <button class="tab" data-t="3">OX 퀴즈<span class="star">★</span></button>
+</nav>
+
+<main>
+<!-- 1 외울 문장 -->
+<section class="panel on">
+  <div class="memo">
+    <div class="msg" id="m0"></div>
+    <div class="sent" id="sent"><span class="term">의식적 반응</span> : <span class="slot"></span>가 <span class="slot"></span>해 명령을 내려, <span class="nb">내 뜻대로 일어나는 반응</span></div>
+    <div class="words" id="words"></div>
+    <div class="read" id="read">
+      <p>소리 내어 세 번 읽어요</p>
+      <div class="dots" id="dots"><button>1번</button><button>2번</button><button>3번</button></div>
+    </div>
+    <div class="row"><button class="bbtn white" id="r0">다시 하기</button></div>
+  </div>
+</section>
+
+<!-- 2 거울 그리기 -->
+<section class="panel">
+  <div class="mg">
+    <div class="msg" id="m1"></div>
+    <div class="mwrap">
+      <div class="stage cstage" id="cstage">
+        <canvas id="cv" aria-label="별 모양 두 줄 길. 출발 동그라미에서 시작해 길을 따라 그린다"></canvas>
+        <div class="badge" id="badge">거울 켜짐 · 위아래 거꾸로</div>
+        <div class="pen" id="pen"></div>
+      </div>
+      <div class="side">
+        <div class="now"><div class="k" id="nowt">1회 · 거울 켜짐</div>
+          <div class="v"><span>걸린 시간 <b id="tsec">0.0</b>초</span><span>나간 횟수 <b id="tout">0</b>번</span></div></div>
+        <div class="btn2"><button class="bbtn white" id="mir">거울 끄기</button><button class="bbtn white" id="redo">다시 하기</button></div>
+        <div class="chart">
+          <div class="cg"><div class="ct">걸린 시간 (초)</div><div class="bars" id="bt"></div></div>
+          <div class="cg"><div class="ct">나간 횟수 (번)</div><div class="bars" id="bn"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 명령이 가는 길 -->
+<section class="panel">
+  <div class="route">
+    <div class="msg" id="m2"></div>
+    <div class="cards" id="cards"></div>
+    <div class="stage rstage">
+      <svg id="rsv" viewBox="0 0 640 372" preserveAspectRatio="xMidYMid meet" role="img" aria-label="눈에서 감각 신경의 뉴런을 지나 대뇌로, 대뇌에서 운동 신경의 뉴런을 지나 손 근육으로 가는 길">
+        <defs>
+          <g id="hand">
+            <rect x="94" y="272" width="60" height="62" rx="18"/>
+            <rect x="40" y="275" width="70" height="14" rx="7"/>
+            <rect x="34" y="291" width="76" height="14" rx="7"/>
+            <rect x="38" y="307" width="72" height="14" rx="7"/>
+            <rect x="48" y="323" width="62" height="12" rx="6"/>
+            <rect x="96" y="244" width="16" height="42" rx="8" transform="rotate(-28 104 265)"/>
+          </g>
+        </defs>
+        <!-- 눈 -->
+        <g id="s0"><path class="eyew" d="M16,92 Q62,46 108,92 Q62,138 16,92 Z"/><circle class="iris" cx="62" cy="92" r="19"/><circle cx="62" cy="92" r="8" fill="#13294b"/><circle cx="68" cy="86" r="4" fill="#fff"/></g>
+        <!-- 감각 신경의 뉴런 -->
+        <g id="s1" class="neu t">
+          <path class="den" d="M165,92 L141,72 L130,57 M141,72 L122,73 M165,92 L136,97 L119,90 M136,97 L122,110 M165,92 L148,118 L143,134 M148,118 L129,124 M165,92 L160,66 L165,50 M160,66 L146,56"/>
+          <path class="ax" d="M180,92 H420"/><path class="my" d="M192,92 H412"/>
+          <path class="den" d="M420,92 L446,74 M420,92 L451,92 M420,92 L446,110"/>
+          <circle class="tb" cx="446" cy="74" r="5"/><circle class="tb" cx="451" cy="92" r="5"/><circle class="tb" cx="446" cy="110" r="5"/>
+          <circle class="body" cx="165" cy="92" r="17"/><circle class="nuc" cx="165" cy="92" r="6"/>
+        </g>
+        <!-- 대뇌 -->
+        <g id="s2">
+          <path class="bw" d="M470,120 C450,100 462,62 492,58 C500,36 536,30 552,44 C574,30 608,42 610,66 C632,78 630,112 612,124 C614,146 588,160 566,150 C552,164 520,164 508,150 C484,156 462,142 470,120 Z"/>
+          <path class="gy" d="M492,80 Q508,70 522,82 M578,64 Q594,74 600,92 M584,128 Q568,140 556,130 M488,128 Q500,138 514,132"/>
+        </g>
+        <!-- 운동 신경의 뉴런 -->
+        <g id="s3" class="neu g">
+          <path class="den" d="M540,214 L522,190 L516,173 M522,190 L505,186 M540,214 L540,186 L533,171 M540,186 L552,173 M540,214 L560,192 L572,178 M560,192 L578,197"/>
+          <path class="ax" d="M540,230 V272 Q540,300 512,300 H182"/><path class="my" d="M540,242 V272 Q540,300 512,300 H190"/>
+          <path class="den" d="M182,300 L157,283 M182,300 L152,300 M182,300 L157,317"/>
+          <circle class="tb" cx="157" cy="283" r="5"/><circle class="tb" cx="152" cy="300" r="5"/><circle class="tb" cx="157" cy="317" r="5"/>
+          <circle class="body" cx="540" cy="214" r="17"/><circle class="nuc" cx="540" cy="214" r="6"/>
+        </g>
+        <!-- 손 -->
+        <g id="s4"><use href="#hand" class="hs"/><use href="#hand" class="hf"/></g>
+        <!-- 신호가 지나간 길 -->
+        <path id="g1" class="leg t" d="M104,92 H451"/>
+        <path id="g2" class="leg t" d="M451,92 Q506,92 540,104"/>
+        <path id="g3" class="leg g" d="M540,104 V272 Q540,300 512,300 H152"/>
+        <path id="g4" class="leg g" d="M152,300 H112"/>
+        <!-- 이름표 -->
+        <text class="lb" id="l0" x="62" y="160">?</text>
+        <text class="lb" id="l1" x="300" y="58">?</text>
+        <text class="lb" id="l2" x="542" y="110">?</text>
+        <text class="lb" id="l3" x="360" y="338">?</text>
+        <text class="lb" id="l4" x="96" y="364">?</text>
+        <g id="dot"><circle class="gl" r="19"/><circle r="9" fill="#ffd84d" stroke="#ff7b1c" stroke-width="3"/></g>
+      </svg>
+    </div>
+    <div class="row"><button class="bbtn white" id="r2">다시 하기</button></div>
+  </div>
+</section>
+
+<!-- 4 OX 퀴즈 -->
+<section class="panel">
+  <div class="quiz">
+    <div class="score"><span id="qn">1</span> / 5 번째 문제 · 점수 <b id="sc">0</b>점</div>
+    <div class="q" id="q"></div>
+    <div class="ox" id="ox"><button class="o" data-a="O">O</button><button class="x" data-a="X">X</button></div>
+    <div class="fb" id="qfb"></div>
+    <div class="row"><button class="bbtn" id="next" style="display:none">다음 문제</button></div>
+  </div>
+</section>
+</main>
+
+<footer><span>어게인 실험과학 수학학원</span><span>교육문의 010.2976.5774</span></footer>
+<div class="fx" id="fx"></div>
+<div class="toast" id="toast">주소가 복사됐어요</div>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+
+/* ---------- 소리 ---------- */
+let ac;
+function audio(){ if(!ac){const A=window.AudioContext||window.webkitAudioContext; if(A) ac=new A();} if(ac&&ac.state==='suspended') ac.resume(); return ac; }
+function tone(freq,dur,vol,type='sine',when=0,freqEnd){
+  const a=audio(); if(!a) return;
+  const o=a.createOscillator(), g=a.createGain(), t=a.currentTime+when;
+  o.type=type; o.frequency.setValueAtTime(freq,t); if(freqEnd) o.frequency.exponentialRampToValueAtTime(freqEnd,t+dur);
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t+dur+0.05);
+}
+const cheer=()=>[523,659,784,1047].forEach((f,i)=>tone(f,.22,.2,'triangle',i*.09));
+const ding=()=>[784,1047].forEach((f,i)=>tone(f,.16,.18,'triangle',i*.08));
+const boo=()=>tone(220,.3,.14,'sawtooth',0,140);
+const tick=()=>tone(520,.09,.07,'triangle');
+
+/* ---------- 보상 ---------- */
+function confetti(n=40){
+  const cols=['#13294b','#0e9f97','#ff7b1c','#ffd84d','#e03b3b','#22a447'];
+  for(let i=0;i<n;i++){ const d=document.createElement('div'); d.className='conf';
+    d.style.left=Math.random()*100+'vw'; d.style.background=cols[i%6]; d.style.borderRadius=i%2?'50%':'3px';
+    d.style.animationDuration=1+Math.random()*.8+'s'; d.style.animationDelay=Math.random()*.2+'s';
+    $('#fx').appendChild(d); setTimeout(()=>d.remove(),2200); }
+}
+function sparkle(el){
+  const r=el.getBoundingClientRect();
+  for(let i=0;i<10;i++){ const s=document.createElement('div'), a=i/10*2*Math.PI, d=46+Math.random()*34;
+    s.className='spk'; s.textContent='✦'; s.style.color=i%2?'#ff7b1c':'#0e9f97';
+    s.style.left=r.left+r.width/2+'px'; s.style.top=r.top+r.height/2+'px';
+    s.style.setProperty('--dx',Math.cos(a)*d+'px'); s.style.setProperty('--dy',Math.sin(a)*d+'px');
+    $('#fx').appendChild(s); setTimeout(()=>s.remove(),750); }
+}
+const shake=el=>{ el.classList.remove('shake'); void el.getBoundingClientRect(); el.classList.add('shake'); };
+const shuffle=a=>{ a=[...a]; for(let i=a.length-1;i>0;i--){ const j=Math.random()*(i+1)|0; [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const tabs=$$('.tab'), panels=$$('.panel');
+function done(i){ if(tabs[i].classList.contains('done')) return; tabs[i].classList.add('done'); confetti(); cheer(); }
+function msg(id,html,cls=''){ const m=$(id); m.className='msg '+cls; m.innerHTML=html; }
+
+/* ---------- 탭 ---------- */
+tabs.forEach(b=>b.onclick=()=>{ const t=+b.dataset.t; tabs.forEach((x,i)=>x.classList.toggle('on',i===t)); panels.forEach((p,i)=>p.classList.toggle('on',i===t)); audio(); });
+
+/* ---------- 공유 ---------- */
+$('#share').onclick=async()=>{
+  const url=location.href;
+  if(navigator.share){ try{ await navigator.share({title:document.title,url}); return; }catch(e){ if(e.name==='AbortError') return; } }
+  try{ await navigator.clipboard.writeText(url); }
+  catch(e){ const t=document.createElement('textarea'); t.value=url; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); }
+  const el=$('#toast'); el.classList.add('on'); setTimeout(()=>el.classList.remove('on'),1800);
+};
+
+/* ---------- 1 외울 문장 ---------- */
+const SHINT=['명령을 내리는 곳은 뇌의 가장 큰 부분이에요. 다시 골라 봐요.','대뇌는 눈이 보낸 자극을 보고 손이 갈 길을 정해요. 이 일을 무엇이라고 할까요?'];
+let si=0, reads=0;
+function slots0(){ $$('#sent .slot').forEach((s,i)=>{ s.textContent=i<si?SLOTS[i]:' '; s.className='slot'+(i<si?' ok':i===si?' cur':''); }); }
+function start0(){
+  si=0; reads=0; $('#sent').classList.remove('solved'); $('#read').classList.remove('on'); $('#words').style.display='';
+  $$('#dots button').forEach(b=>b.classList.remove('on'));
+  $('#words').innerHTML=shuffle(WORDS).map(w=>`<button class="bbtn white">${w}</button>`).join('');
+  $$('#words button').forEach(b=>b.onclick=()=>pick0(b));
+  slots0(); msg('#m0','외울 문장의 빈칸을 채워요. <b>주황 빈칸</b>에 들어갈 낱말을 눌러요.');
+}
+function pick0(b){
+  if(b.textContent!==SLOTS[si]){ shake(b); boo(); msg('#m0','아쉬워요. '+SHINT[si],'warn'); return; }
+  b.classList.add('on'); b.disabled=true; si++; slots0();
+  if(si<SLOTS.length){ ding(); msg('#m0','딩동댕! 이제 두 번째 빈칸이에요.','good'); return; }
+  $('#words').style.display='none'; $('#sent').classList.add('solved'); $('#read').classList.add('on');
+  msg('#m0','딩동댕! 외울 문장을 완성했어요. 큰 소리로 세 번 읽고, 읽을 때마다 동그라미를 눌러요.','good');
+  sparkle($('#sent')); done(0);
+}
+$$('#dots button').forEach(b=>b.onclick=()=>{
+  if(reads>=3) return; $$('#dots button')[reads++].classList.add('on');
+  if(reads<3){ ding(); return; }
+  sparkle($('#dots')); confetti(14); cheer();
+  msg('#m0','세 번 다 읽었어요! 이제 「거울 그리기」에서 대뇌가 판단하는 모습을 직접 느껴 봐요.','good');
+});
+$('#r0').onclick=()=>{ start0(); tick(); };
+start0();
+
+/* ---------- 2 거울 그리기 ---------- */
+// 그림판은 가로 · 세로 1000칸으로 생각한다. 길 = 별 모양 가운데 선에서 W/2 안쪽.
+// 거울 켜짐 : 손가락 자리의 세로(y)만 1000 - y로 뒤집어 그린다(책상에 세운 거울처럼 위 · 아래만 바뀜).
+const cv=$('#cv'), ctx=cv.getContext('2d');
+const W=90, NB=40;                                     // 길 너비, 한 바퀴를 나눈 칸 수
+const STAR=[...Array(10)].map((_,i)=>{ const a=(-90+i*36)*Math.PI/180, r=i%2?185:420; return [500+r*Math.cos(a),525+r*Math.sin(a)]; });
+const START={x:STAR[0][0],y:STAR[0][1]}, START_R=34;
+const SEG=STAR.map((p,i)=>{ const q=STAR[(i+1)%10]; return {x:p[0],y:p[1],dx:q[0]-p[0],dy:q[1]-p[1]}; });
+let PER=0; SEG.forEach(s=>{ s.len=Math.hypot(s.dx,s.dy); s.s0=PER; PER+=s.len; });
+function near(x,y){   // 가운데 선까지 거리 d, 출발점부터 길을 따라 잰 자리 s
+  let d=1e9, s=0;
+  for(const g of SEG){ const t=Math.max(0,Math.min(1,((x-g.x)*g.dx+(y-g.y)*g.dy)/(g.len*g.len))), e=Math.hypot(x-g.x-t*g.dx,y-g.y-t*g.dy);
+    if(e<d){ d=e; s=g.s0+t*g.len; } }
+  return {d,s};
+}
+let unit=1, mirror=true, phase='wait', ink=[], last=null, down=false, prevIn=true, outs=0, t0=0, el=0, cur='';
+const seen=new Set(); let rec={m:[],f:null};
+const lw=()=>Math.max(8,3/unit);
+function line(s){ ctx.beginPath(); ctx.moveTo(s[0],s[1]); ctx.lineTo(s[2],s[3]); ctx.strokeStyle=s[4]?'#1f6fd1':'#e03b3b'; ctx.lineWidth=lw(); ctx.lineCap='round'; ctx.stroke(); }
+function redraw(){
+  if(!cv.width) return;
+  const k=cv.width/1000, ol=Math.max(5,2/unit);
+  ctx.setTransform(k,0,0,k,0,0); ctx.fillStyle='#fff'; ctx.fillRect(0,0,1000,1000);
+  ctx.lineJoin='round'; ctx.lineCap='round';
+  ctx.beginPath(); STAR.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath();
+  ctx.strokeStyle='#13294b'; ctx.lineWidth=W+ol; ctx.stroke();
+  ctx.strokeStyle='#f3f6fa'; ctx.lineWidth=W-ol; ctx.stroke();
+  ctx.beginPath(); ctx.arc(START.x,START.y,START_R,0,Math.PI*2); ctx.fillStyle='rgba(255,123,28,.35)'; ctx.fill();
+  ctx.lineWidth=Math.max(4,2/unit); ctx.strokeStyle='#ff7b1c'; ctx.stroke();
+  ctx.font='46px Jua, sans-serif'; ctx.fillStyle='#c25300'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('출발',625,START.y+12);
+  ink.forEach(line);
+}
+function fit(){
+  const r=cv.getBoundingClientRect(); if(!r.width) return;
+  const dpr=Math.min(2,window.devicePixelRatio||1); unit=r.width/1000;
+  cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.height*dpr); redraw();
+}
+new ResizeObserver(fit).observe(cv);
+if(document.fonts) document.fonts.load('46px Jua').then(redraw,()=>{});
+
+function stat(){ $('#nowt').textContent=cur; $('#tsec').textContent=el.toFixed(1); $('#tout').textContent=outs; }
+const WAIT_MSG=()=>mirror
+  ?'<b>거울 켜짐</b> : 손가락의 위 · 아래 움직임이 거꾸로 그려져요. 화면을 누른 채 주황 점을 「출발」 동그라미에 대면 시작해요.'
+  :'<b>거울 꺼짐</b> : 손가락 그대로 그려져요. 화면을 누른 채 주황 점을 「출발」 동그라미에 대면 시작해요.';
+function newTry(){
+  ink=[]; last=null; seen.clear(); outs=0; el=0; prevIn=true; redraw();
+  if(mirror&&rec.m.length>=3){ phase='full'; cur='거울 3회 끝';
+    msg('#m1','거울 3회를 다 그렸어요. 「거울 끄기」를 눌러 한 번 더 그리거나, 「다시 하기」로 처음부터 해요.'); }
+  else{ phase='wait'; cur=mirror?`${rec.m.length+1}회 · 거울 켜짐`:'한 번 더 · 거울 꺼짐'; msg('#m1',WAIT_MSG()); }
+  stat();
+}
+function begin(){ phase='run'; t0=performance.now(); tick();
+  msg('#m1','출발! 두 줄 사이 길을 따라 별을 한 바퀴 그려요. 길 밖으로 나가도 멈추지 말고 이어 그려요.'); requestAnimationFrame(clock); }
+function clock(now){ if(phase!=='run') return; el=(now-t0)/1000; if(el>=120){ finish(true); return; } stat(); requestAnimationFrame(clock); }
+function finish(over){
+  phase='done'; if(over) el=120; else el=(performance.now()-t0)/1000;
+  const r={t:Math.round(el*10)/10,n:outs,over}, T=x=>x.over?'120초 넘음':x.t+'초';
+  let say;
+  if(mirror){ rec.m.push(r); const k=rec.m.length;
+    say=`<b>${k}회 기록</b> : ${T(r)} · 나간 횟수 ${r.n}번. `;
+    if(k<3) say+=`화면을 다시 누르면 ${k+1}회를 그려요.`;
+    else{ const d=rec.m[0].t-r.t;
+      say+=(d>0?`1회보다 ${d.toFixed(1)}초 빨라졌어요. 연습할수록 대뇌의 판단이 빨라져요. `:'연습을 거듭하면 점점 빨라져요. ')+'이제 「거울 끄기」를 눌러 한 번 더 그려요.'; } }
+  else{ rec.f=r; say=`<b>거울 없이</b> : ${T(r)} · 나간 횟수 ${r.n}번. `;
+    if(rec.m[0]&&rec.m[0].t>r.t) say+=`거울 1회보다 ${(rec.m[0].t-r.t).toFixed(1)}초 빨라요. 보이는 방향 그대로라 대뇌가 바로 판단했어요.`;
+    else if(!rec.m.length) say+='「거울 켜기」를 눌러 거울로도 그려 견줘 봐요.'; }
+  stat(); chart(); msg('#m1',say,'good'); sparkle(cv);
+  if(rec.m.length===3&&rec.f&&!tabs[1].classList.contains('done')) done(1); else ding();
+}
+function chart(){
+  const cols=[0,1,2].map(i=>({nm:`거울 ${i+1}회`,r:rec.m[i]})).concat({nm:'거울 없이',r:rec.f,f:1});
+  const mk=(key,id)=>{ const mx=Math.max(1,...cols.filter(c=>c.r).map(c=>c.r[key]));
+    $(id).innerHTML=cols.map(c=>`<div class="bar${c.f?' f':''}${c.r?'':' empty'}"><span class="val">${c.r?(key==='t'&&c.r.over?'120+':c.r[key]):''}</span><div class="trk"><i style="height:${c.r?Math.max(3,c.r[key]/mx*100):30}%"></i></div><span class="bl">${c.nm}</span></div>`).join(''); };
+  mk('t','#bt'); mk('n','#bn');
+}
+function handle(e){
+  const b=cv.getBoundingClientRect(), x=(e.clientX-b.left)/b.width*1000;
+  let y=(e.clientY-b.top)/b.height*1000; if(mirror) y=1000-y;
+  const p=$('#pen'); p.style.display='block'; p.style.transform=`translate(${x*unit}px,${y*unit}px)`;
+  if(phase==='wait'){ if(Math.hypot(x-START.x,y-START.y)>START_R+6) return; begin(); }
+  if(phase!=='run') return;
+  const {d,s}=near(x,y), inR=d<=W/2;
+  if(prevIn&&!inR){ outs++; tone(300,.08,.06,'triangle'); }
+  prevIn=inR;
+  if(inR) seen.add(Math.min(NB-1,Math.floor(s/PER*NB)));
+  if(last){ const sg=[last[0],last[1],x,y,inR]; ink.push(sg); line(sg); }
+  last=[x,y]; stat();
+  if(seen.size>=NB-1&&Math.hypot(x-START.x,y-START.y)<=W*.6) finish(false);
+}
+cv.addEventListener('pointerdown',e=>{ e.preventDefault(); audio(); try{ cv.setPointerCapture(e.pointerId); }catch(_){}
+  down=true; last=null; if(phase==='done') newTry(); else if(phase==='full') msg('#m1',$('#m1').innerHTML,'warn'); handle(e); });
+cv.addEventListener('pointermove',e=>{ if(!down) return; e.preventDefault();
+  const ev=e.getCoalescedEvents?e.getCoalescedEvents():[]; (ev.length?ev:[e]).forEach(handle); });
+const up=()=>{ down=false; last=null; $('#pen').style.display='none'; };
+['pointerup','pointercancel','lostpointercapture'].forEach(t=>cv.addEventListener(t,up));
+function setMirror(on){ mirror=on; $('#mir').textContent=on?'거울 끄기':'거울 켜기'; $('#mir').classList.toggle('on',!on);
+  const g=$('#badge'); g.textContent=on?'거울 켜짐 · 위아래 거꾸로':'거울 꺼짐'; g.classList.toggle('off',!on); newTry(); }
+$('#mir').onclick=()=>{ setMirror(!mirror); tick(); };
+$('#redo').onclick=()=>{ rec={m:[],f:null}; chart(); setMirror(true); tick(); };
+chart(); setMirror(true);
+
+/* ---------- 3 명령이 가는 길 ---------- */
+const RT=['눈','감각 신경','대뇌','운동 신경','손 근육'];
+const RHINT=['별 모양 길을 가장 먼저 보는 곳은 어디일까요?','눈이 받아들인 자극을 대뇌로 전달하는 신경은?','자극을 판단해 명령을 내리는 곳은?','대뇌의 명령을 손 근육으로 전달하는 신경은?','명령을 받아 움직이는 곳은?'];
+const RSAY=['눈이 별 모양 길의 모습(자극)을 받아들여요.','감각 신경의 뉴런이 자극을 대뇌로 전달해요.','대뇌가 손이 갈 길을 판단해 명령을 내려요.','운동 신경의 뉴런이 명령을 손 근육으로 전달해요.','손 근육이 움직여 길을 따라 그려요.'];
+let rs=0, busy=false;
+const dot=$('#dot');
+function travel(path,ms,end){
+  const L=path.getTotalLength(), s=performance.now();
+  path.style.strokeDasharray=L; path.style.strokeDashoffset=L; path.style.opacity=.85;
+  (function f(now){ const k=Math.min(1,(now-s)/ms), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2, p=path.getPointAtLength(e*L);
+    dot.setAttribute('transform',`translate(${p.x},${p.y})`); path.style.strokeDashoffset=L*(1-e);
+    if(k<1) requestAnimationFrame(f); else end(); })(s);
+}
+function light(i){ $('#s'+i).classList.add('lit'); const l=$('#l'+i); l.textContent=RT[i]; l.classList.add('on'); }
+function start2(){
+  rs=0; busy=false; dot.style.display='none';
+  for(let i=0;i<5;i++){ $('#s'+i).classList.remove('lit'); const l=$('#l'+i); l.textContent='?'; l.classList.remove('on'); }
+  $$('.leg').forEach(g=>g.style.opacity=0);
+  let order; do order=shuffle(RT); while(order.every((w,i)=>w===RT[i]));
+  $('#cards').innerHTML=order.map(w=>`<button class="bbtn white">${w}<span class="no"></span></button>`).join('');
+  $$('#cards button').forEach(b=>b.onclick=()=>pick2(b));
+  msg('#m2','별 모양 길을 따라 그릴 때 신호가 지나가는 차례대로 카드 5장을 눌러요. '+RHINT[0]);
+}
+function pick2(b){
+  if(busy||b.disabled) return;
+  const w=b.firstChild.textContent;
+  if(w!==RT[rs]){ shake(b); boo(); msg('#m2','차례가 달라요. '+RHINT[rs],'warn'); return; }
+  const i=rs++; b.classList.add('ok'); b.disabled=true; b.querySelector('.no').textContent=rs;
+  const fin=()=>{ busy=false; light(i);
+    if(rs<5){ tick(); msg('#m2',RSAY[i]+' 다음은? '+RHINT[rs]); return; }
+    msg('#m2',RSAY[4]+' <b>대뇌가 판단해 운동 신경으로 명령을 보내요!</b>','good'); sparkle($('#s4')); done(2); };
+  if(i===0){ dot.style.display='block'; dot.setAttribute('transform','translate(104,92)'); fin(); return; }
+  busy=true; tick(); travel($('#g'+i),i===2?600:900,fin);
+}
+$('#r2').onclick=()=>{ start2(); tick(); };
+start2();
+
+/* ---------- 4 OX 퀴즈 ---------- */
+let qi=0, score=0;
+function showQ(){
+  $('#ox').style.display=''; $('#qn').textContent=qi+1; $('#sc').textContent=score; $('#q').textContent=QS[qi][0];
+  $('#qfb').textContent=''; $('#qfb').className='fb'; $('#next').style.display='none'; $$('#ox button').forEach(b=>b.disabled=false);
+}
+$$('#ox button').forEach(b=>b.onclick=()=>{
+  const [,ans,why]=QS[qi], ok=b.dataset.a===ans; $$('#ox button').forEach(x=>x.disabled=true);
+  if(ok){ score++; ding(); sparkle(b); confetti(14); } else boo();
+  $('#sc').textContent=score; $('#qfb').className='fb '+(ok?'good':'bad');
+  $('#qfb').textContent=(ok?'딩동댕! ':'아쉬워요. 정답은 '+ans+'예요. ')+why;
+  $('#next').textContent=qi<QS.length-1?'다음 문제':'결과 보기'; $('#next').style.display='';
+});
+$('#next').onclick=()=>{
+  if(qi===QS.length){ qi=0; score=0; showQ(); return; }
+  if(++qi<QS.length){ showQ(); return; }
+  $('#q').textContent=`${QS.length}문제 중 ${score}문제를 맞혔어요!`; $('#ox').style.display='none'; $('#qfb').className='fb good';
+  $('#qfb').textContent=score===QS.length?'완벽해요! 다섯 문제를 모두 맞혔어요.':score>=3?'잘했어요! 틀린 문제는 앞의 활동으로 다시 확인해 봐요.':'괜찮아요. 앞의 활동을 다시 해 보고 또 도전해요!';
+  $('#next').textContent='다시 하기'; if(score===QS.length) done(3);
+};
+showQ();
+</script>
+</body>
+</html>
